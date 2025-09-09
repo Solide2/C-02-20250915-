@@ -5,10 +5,11 @@ int main() {
 	int product;
 	int in[101];
 	int out[101];
+	int a;
 
 	scanf_s("%d", &product);
 
-	for  (int i = 0; i < product; i++)
+	for (int i = 0; i < product; i++)
 	{
 		scanf_s("%d", &in[i]);
 	}
@@ -20,7 +21,9 @@ int main() {
 
 	scanf_s("%d", &id);
 
-	printf("%d\n", in[id] - out[id]);
+	a = id - 1;
+
+	printf("%d\n", in[a] - out[a]);
 	for (int i = 0; i < product; i++)
 	{
 		printf("%d", in[i] - out[i]);
