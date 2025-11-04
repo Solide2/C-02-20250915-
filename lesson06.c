@@ -1,4 +1,4 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <string.h>
 #define PRODUCT 5
@@ -132,7 +132,7 @@ void InMenu() {
         printf("0 이하의 수량은 입력할 수 없습니다.\n");
         return;
     }
-    
+
     int cost;
     printf("판매 가격 입력: ");
     scanf_s("%d", &cost);
@@ -141,7 +141,7 @@ void InMenu() {
         printf("0 이하의 판매 가격은 입력할 수 없습니다.\n");
         return;
     }
-    productcost[index] += cost;
+    productcost[index] = cost;
     in[index] += qty;
     outall[index] += qty;
     inall += qty;
@@ -155,7 +155,7 @@ void OutMenu() {
     printf("\n[판매 메뉴]\n");
     int id = ProductID();
     if (id == -1) return;
-    
+
     //상품ID : (입력)상품ID << 없으면 오류메시지 출력
     if (strlen(name[index]) == 0) {
         printf("상품명이 등록되지 않았습니다.\n");
@@ -164,7 +164,7 @@ void OutMenu() {
     //판매량: (입력)판매수량 입력
     int qty;
     printf("판매 수량 입력: ");
-    scanf_s("%d",&qty);
+    scanf_s("%d", &qty);
     clearInputBuffer();
 
     if (strlen(name[index]) == 0) {
@@ -260,7 +260,7 @@ void allStatus() {
     if (maxID == -1) {
         printf("등록된 상품이 없습니다.\n");
     }
-    else if (maxSales == 0){
+    else if (maxSales == 0) {
         printf("판매된 상품이 없음\n");
     }
     else
@@ -287,7 +287,7 @@ void saveData() {
                 name[i][j] = '_';
         }
 
-        fprintf(fp, "%d %s %d %d %d %d\n",ID[i] ,name[i], in[i], out[i], outall[i], productcost[i]);
+        fprintf(fp, "%d %s %d %d %d %d\n", ID[i], name[i], in[i], out[i], outall[i], productcost[i]);
     }
     fclose(fp);
     printf("\n저장 완료\n");
@@ -303,13 +303,13 @@ void loadData() {
     }
 
     for (int i = 0; i < PRODUCT; i++) {
-        if (fscanf(fp, "%d %s %d %d %d %d",&ID[i], name[i], &in[i], &out[i], &outall[i], &productcost[i]) != 6) {
+        if (fscanf(fp, "%d %s %d %d %d %d", &ID[i], name[i], &in[i], &out[i], &outall[i], &productcost[i]) != 6) {
             break;
         }
         // 이름에서 '_'를 공백으로 바꾸기
-        for (int j = 0; j < strlen(name[i]); j++) { 
-            if (name[i][j] == '_') 
-                name[i][j] = ' '; 
+        for (int j = 0; j < strlen(name[i]); j++) {
+            if (name[i][j] == '_')
+                name[i][j] = ' ';
         }
     }
     fclose(fp);
