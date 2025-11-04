@@ -2,28 +2,29 @@
 
 int main() {
 	int id;
-	int a;//id ÀÔ·Â
+	int a;//id ì…ë ¥
 	int product;
-	int in[101];//ÀÔ°í
-	int inall = 0; //ÃÑ ÀÔ°í ¼ö·®
-	int out[101];//Ãâ°í
-	int outall[101];//³²Àº ¼ö·®
+	int in[101];//ì…ê³ 
+	int inall = 0; //ì´ ì…ê³  ìˆ˜ëŸ‰
+	int out[101];//ì¶œê³ 
+	int outall[101];//ë‚¨ì€ ìˆ˜ëŸ‰
 	
-	int sellall = 0;//ÃÑ ÆÇ¸Å·®
-	float sellpercent = 0;//ÆÇ¸ÅÀ²
 
-	printf("»óÇ° Á¾·ù :");
+	int sellall = 0;//ì´ íŒë§¤ëŸ‰
+	float sellpercent = 0;//íŒë§¤ìœ¨
+
+	printf("ìƒí’ˆ ì¢…ë¥˜ :");
 
 	scanf_s("%d", &product);
 
-	printf("ÀÔ°í ¼ö·® :");
+	printf("ì…ê³  ìˆ˜ëŸ‰ :");
 
 	for (int i = 0; i < product; i++)
 	{
 		scanf_s("%d", &in[i]);
 	}
 
-	printf("ÆÇ¸Å ¼ö·® :");
+	printf("íŒë§¤ ìˆ˜ëŸ‰ :");
 	for (int i = 0; i < product; i++)
 	{
 		scanf_s("%d", &out[i]);
@@ -36,31 +37,51 @@ int main() {
 		sellall += out[i];
 	}
 
-	printf("ID ÀÔ·Â :");
+	printf("ID ì…ë ¥ :");
 	scanf_s("%d", &id);
 	a = id - 1;
-	
-	printf("ID¿¡ ÇØ´çÇÏ´Â Á¦Ç°ÀÇ Àç°í ¼ö·® :");
+
+	printf("IDì— í•´ë‹¹í•˜ëŠ” ì œí’ˆì˜ ì¬ê³  ìˆ˜ëŸ‰ :");
 	printf("%d\n", outall[a]);
 
-	printf("Àç°í ¼ö·®: ");
+	printf("ì¬ê³  ìˆ˜ëŸ‰: ");
 	for (int i = 0; i < product; i++)
 	{
 		printf("%d", outall[i]);
 		printf(" ");
 	}
 
-	sellpercent = (sellall / (float)inall)*100;
+	sellpercent = (sellall / (float)inall) * 100;
 
-	printf("\nÃÑ ÆÇ¸Å·® %d (ÆÇ¸ÅÀ² %.2f)\n", sellall, sellpercent);
+	printf("\nì´ íŒë§¤ëŸ‰ %d (íŒë§¤ìœ¨ %.2f)\n", sellall, sellpercent);
 
 
 	for (int i = 0; i < product; i++)
 	{
 		if (outall[i] <= 2)
-			{
-			printf("»óÇ° ID %d: Àç°í ºÎÁ· (%d)\n", i, outall[i]);
-			}
+		{
+			printf("ìƒí’ˆ ID %d: ì¬ê³  ë¶€ì¡± (%d)\n", i, outall[i]);
+		}
 	}
-	
+	int sold[101];
+
+	for (int i = 0; i < product; i++) {
+		sold[i] = in[i] - outall[i];
+	}
+
+	int maxID = 0, minID = 0;
+	int maxSales = sold[0], minSales = sold[0];
+
+	for (int i = 1; i < product; i++) {
+		if (sold[i] > maxSales) {
+			maxSales = sold[i];
+			maxID = i;
+		}
+		if (sold[i] < minSales) {
+			minSales = sold[i];
+			minID = i;
+		}
+	}
+	printf("\nê°€ì¥ ë§ì´ íŒë§¤ëœ ìƒí’ˆ : ID %d, íŒë§¤ëŸ‰ %d\n", maxID + 1, maxSales);
+	printf("ê°€ì¥ ì ê²Œ íŒë§¤ëœ ìƒí’ˆ : ID %d, íŒë§¤ëŸ‰ %d\n", minID + 1, minSales);
 }
