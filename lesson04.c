@@ -8,7 +8,7 @@ int out[PRODUCT];     // 판매 수량
 int outall[PRODUCT];  // 남은 수량
 int inall = 0;        // 총 입고량
 int sellall = 0;      // 총 판매량
-char name[PRODUCT][101];
+char name[PRODUCT][101]; // 상품명
 
 // 함수
 int MainMenu();
@@ -191,3 +191,4 @@ void ProductName() {
     }
     printf("상품명 입력이 완료되었습니다.\n");
 }
+
