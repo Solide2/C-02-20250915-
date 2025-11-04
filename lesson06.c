@@ -4,15 +4,15 @@
 #define PRODUCT 5
 
 
-int in[PRODUCT];      // 입고 수량
-int out[PRODUCT];     // 판매 수량
-int outall[PRODUCT];  // 남은 수량
-int inall = 0;        // 총 입고량
-int sellall = 0;      // 총 판매량
-char name[PRODUCT][101]; // 상품명
-int productcost[PRODUCT];      //상품 가격
-int ID[PRODUCT];
-int index;
+int in[PRODUCT];                  // 입고 수량
+int out[PRODUCT];                 // 판매 수량
+int outall[PRODUCT];              // 남은 수량
+int inall = 0;                    // 총 입고량
+int sellall = 0;                  // 총 판매량
+char name[PRODUCT][101];          // 상품명
+int productcost[PRODUCT];         //상품 가격
+int ID[PRODUCT];                  //상품 ID
+int index;                        //인덱스
 
 // 함수
 int MainMenu();
@@ -314,4 +314,5 @@ void loadData() {
     }
     fclose(fp);
     printf("\n불러오기 완료\n");
+
 }
