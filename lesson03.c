@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #define PRODUCT 5
 
 int product;          // 상품 종류 수
@@ -83,7 +83,7 @@ void InMenu() {
     {
         printf("잘못된 입력\n");
     }
-    
+
 }
 
 // 판매
@@ -122,27 +122,47 @@ void OutMenu() {
         }
     }
 
-     else{
+    else {
         printf("잘못된 입력\n");
-     }
-    printf("판매 처리가 완료되었습니다.\n");
     }
-    
+    printf("판매 처리가 완료되었습니다.\n");
+}
+
 
 // 상품 현황
 void ProductStatus() {
     float sellpercent = 0;
-    if (inall > 0) 
+    if (inall > 0)
         sellpercent = (sellall / (float)inall) * 100;
 
     printf("\n[상품 현황]\n");
     for (int i = 0; i < PRODUCT; i++) {
-        printf("상품 ID %d: 남은 재고 %d\n", i + 1, outall[i]);
         if (outall[i] <= 2)
             printf("상품 ID %d: 재고 부족 (%d)\n", i + 1, outall[i]);
     }
 
-    printf("\n총 입고량: %d\n", inall);
     printf("총 판매량: %d\n", sellall);
     printf("판매율: %.2f%%\n", sellpercent);
+
+    int sold[PRODUCT];
+
+    for (int i = 0; i < PRODUCT; i++) {
+        sold[i] = in[i] - outall[i];
+    }
+
+    int maxID = 0, minID = 0;
+    int maxSales = sold[0], minSales = sold[0];
+
+    for (int i = 1; i < PRODUCT; i++) {
+        if (sold[i] > maxSales) {
+            maxSales = sold[i];
+            maxID = i;
+        }
+        if (sold[i] < minSales) {
+            minSales = sold[i];
+            minID = i;
+        }
+    }
+    printf("\n가장 많이 판매된 상품 : ID %d, 판매량 %d\n", maxID + 1, maxSales);
+    printf("가장 적게 판매된 상품 : ID %d, 판매량 %d\n", minID + 1, minSales);
 }
