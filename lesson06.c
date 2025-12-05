@@ -3,18 +3,21 @@
 #include <string.h>
 #define PRODUCT 5
 
+typedef struct {
+    int ID;
+    char name[101];
+    int in;         // 입고 수량
+    int out;        // 판매 수량
+    int remain;     // 남은 수량
+    int cost;       // 상품 가격
+} Product;
 
-int in[PRODUCT];                  // 입고 수량
-int out[PRODUCT];                 // 판매 수량
-int outall[PRODUCT];              // 남은 수량
-int inall = 0;                    // 총 입고량
-int sellall = 0;                  // 총 판매량
-char name[PRODUCT][101];          // 상품명
-int productcost[PRODUCT];         //상품 가격
-int ID[PRODUCT];                  //상품 ID
-int index;                        //인덱스
+Product items[PRODUCT];   // 상품 리스트
 
-// 함수
+int inall = 0;            // 총 입고량
+int sellall = 0;          // 총 판매량
+
+// 함수 선언
 int MainMenu();
 void InMenu();
 void OutMenu();
@@ -26,61 +29,39 @@ void clearInputBuffer(void);
 void saveData();
 void loadData();
 
-
-//메뉴 터널
+// Main
 int main() {
     int select;
-
     while (1) {
         select = MainMenu();
-
         switch (select) {
-        case 1:
-            InMenu();
-            break;
-        case 2:
-            OutMenu();
-            break;
-        case 3:
-            oneStatus();
-            break;
-        case 4:
-            allStatus();
-            break;
-        case 5:
-            saveData();
-            break;
-        case 6:
-            loadData();
-            break;
-        case 7:
-            printf("프로그램을 종료합니다.\n");
-            return 0;
-        default:
-            printf("잘못된 선택입니다.\n");
-            break;
+        case 1: InMenu(); break;
+        case 2: OutMenu(); break;
+        case 3: oneStatus(); break;
+        case 4: allStatus(); break;
+        case 5: saveData(); break;
+        case 6: loadData(); break;
+        case 7: printf("프로그램을 종료합니다.\n"); return 0;
+        default: printf("잘못된 선택입니다.\n"); break;
         }
     }
 }
 
-//입력값 지우기
 void clearInputBuffer(void) {
     while (getchar() != '\n');
 }
 
-//상품 이름
 void setProductName(int id) {
     printf("상품명 입력 : ");
-    scanf_s("%100s", name[id], 101);
+    scanf("%100s", items[id].name);
     clearInputBuffer();
 }
 
-//상품 ID 
 int ProductID() {
     int id;
     printf("상품 ID (1 ~ %d) 입력 : ", PRODUCT);
 
-    if (scanf_s("%d", &id) != 1) {
+    if (scanf("%d", &id) != 1) {
         printf("숫자를 입력하세요!\n");
         clearInputBuffer();
         return -1;
@@ -90,229 +71,165 @@ int ProductID() {
         printf("잘못된 입력입니다. (1~%d 사이 숫자를 입력하세요)\n", PRODUCT);
         return -1;
     }
-    index = id - 1;
-    return id;
+    clearInputBuffer();
+    return id - 1;
 }
 
-//선택 메뉴
 int MainMenu() {
     int select;
     printf("\n[쇼핑몰 관리 프로그램]\n");
-    printf("1. 입고\n");
-    printf("2. 판매\n");
-    printf("3. 개별 현황\n");
-    printf("4. 전체 현황\n");
-    printf("5. 저장하기\n");
-    printf("6. 불러오기\n");
-    printf("7. 종료\n");
+    printf("1. 입고\n2. 판매\n3. 개별 현황\n4. 전체 현황\n");
+    printf("5. 저장하기\n6. 불러오기\n7. 종료\n");
     printf("원하는 메뉴 선택: ");
-    scanf_s("%d", &select);
+    scanf("%d", &select);
     clearInputBuffer();
     return select;
 }
 
-//입고
 void InMenu() {
     printf("\n[입고 메뉴]\n");
     int id = ProductID();
     if (id == -1) return;
 
-    if (strlen(name[index]) == 0) {
-        printf("상품이 없어 생성\n");
-        setProductName(index);
-        ID[index] = id;
+    if (strlen(items[id].name) == 0) {
+        printf("새로운 상품 → 상품명 등록\n");
+        setProductName(id);
+        items[id].ID = id + 1;
     }
 
     int qty;
-    printf("입고 수량 입력: ");
-    scanf_s("%d", &qty);
+    printf("입고 수량: ");
+    scanf("%d", &qty);
     clearInputBuffer();
 
     if (qty <= 0) {
-        printf("0 이하의 수량은 입력할 수 없습니다.\n");
+        printf("0 이하 수량 불가\n");
         return;
     }
 
     int cost;
-    printf("판매 가격 입력: ");
-    scanf_s("%d", &cost);
+    printf("판매 가격: ");
+    scanf("%d", &cost);
     clearInputBuffer();
+
     if (cost <= 0) {
-        printf("0 이하의 판매 가격은 입력할 수 없습니다.\n");
+        printf("0 이하 가격 불가\n");
         return;
     }
-    productcost[index] = cost;
-    in[index] += qty;
-    outall[index] += qty;
+
+    items[id].cost = cost;
+    items[id].in += qty;
+    items[id].remain += qty;
     inall += qty;
 
-    printf("상품 [%s] %d개 입고 완료.\n", name[index], qty);
+    printf("상품 [%s] %d개 입고 완료.\n", items[id].name, qty);
 }
 
-
-//판매
 void OutMenu() {
     printf("\n[판매 메뉴]\n");
     int id = ProductID();
     if (id == -1) return;
 
-    //상품ID : (입력)상품ID << 없으면 오류메시지 출력
-    if (strlen(name[index]) == 0) {
-        printf("상품명이 등록되지 않았습니다.\n");
+    if (strlen(items[id].name) == 0) {
+        printf("등록되지 않은 상품입니다.\n");
         return;
     }
-    //판매량: (입력)판매수량 입력
+
     int qty;
-    printf("판매 수량 입력: ");
-    scanf_s("%d", &qty);
+    printf("판매 수량 : ");
+    scanf("%d", &qty);
     clearInputBuffer();
 
-    if (strlen(name[index]) == 0) {
-        printf("상품명이 등록되지 않았습니다.\n");
+    if (qty > items[id].remain) {
+        printf("재고 부족! 현재 재고: %d\n", items[id].remain);
         return;
     }
 
-    if (qty > outall[index]) {
-        printf("재고 부족 현재 재고: %d\n", outall[index]);
-        return;
-    }
-
-    out[index] += qty;
-    outall[index] -= qty;
+    items[id].out += qty;
+    items[id].remain -= qty;
     sellall += qty;
 }
 
-
-//개별 현황
 void oneStatus() {
-    //상품 ID를 입력받아 상품정보(상품명, 가격,…)를 출력한다. 
-    printf("\n[개별 현황 메뉴]\n");
+    printf("\n[개별 현황]\n");
     int id = ProductID();
     if (id == -1) return;
 
-
-    printf("\n상품 ID: %d\n", id);
-    printf("상품명: %s\n", (strlen(name[index]) > 0) ? name[index] : "등록 안됨");
-    printf("상품 가격: %d\n", productcost[index]);
-    printf("입고 수량: %d\n", in[index]);
-    printf("판매 수량: %d\n", out[index]);
-    printf("남은 재고: %d\n", outall[index]);
+    printf("상품 ID: %d\n", items[id].ID);
+    printf("상품명: %s\n", (strlen(items[id].name) > 0) ? items[id].name : "등록 안됨");
+    printf("가격: %d\n", items[id].cost);
+    printf("입고: %d | 판매: %d | 재고: %d\n",
+        items[id].in, items[id].out, items[id].remain);
 }
 
-
-//전체 현황
 void allStatus() {
-    // 전체현황 메뉴 : 앞서 개발한 상품현황(판매율…)을 출력한다.
-    float sellpercent = 0;
-    if (inall > 0)
-        sellpercent = (sellall / (float)inall) * 100;
+    printf("\n[전체 현황]\n");
 
-    printf("\n[상품 현황]\n");
-    printf("재고 수량 :");
-    for (int i = 0; i < PRODUCT; i++)
-    {
-        if (strlen(name[i]) == 0)
-            continue;
-        printf("%d ", outall[i]);
-    }
+    float rate = 0;
+    if (inall > 0) rate = (sellall / (float)inall) * 100;
 
-    printf("\n");
-    for (int i = 0; i < PRODUCT; i++) {
-        if (strlen(name[i]) == 0)
-            continue;
-        if (outall[i] <= 2)
-            printf("상품 ID %d %s: 재고 부족 (%d)\n", i + 1, name[i], outall[i]);
-    }
-
-    printf("총 판매량: %d\n", sellall);
-    printf("판매율: %.2f%%\n", sellpercent);
-
-    int sold[PRODUCT];
-
-    for (int i = 0; i < PRODUCT; i++) {
-        sold[i] = in[i] - outall[i];
-    }
+    printf("총 판매량: %d | 판매율: %.2f%%\n", sellall, rate);
 
     int maxID = -1, minID = -1;
-    int maxSales = 0, minSales = 0;
+    int maxSales = -1, minSales = 999999;
 
     for (int i = 0; i < PRODUCT; i++) {
-        if (strlen(name[i]) == 0) {
-            continue;
-        }
+        if (strlen(items[i].name) == 0) continue;
 
-        if (maxID == -1) {
-            maxID = minID = i;
-            maxSales = minSales = sold[i];
-            continue;
-        }
+        int sold = items[i].in - items[i].remain;
 
-        if (sold[i] > maxSales) {
-            maxSales = sold[i];
-            maxID = i;
-        }
+        if (sold > maxSales) { maxSales = sold; maxID = i; }
+        if (sold < minSales) { minSales = sold; minID = i; }
 
-        if (sold[i] < minSales) {
-            minSales = sold[i];
-            minID = i;
-        }
+        if (items[i].remain <= 2)
+            printf("재고 부족 → ID %d %s (%d개)\n",
+                i + 1, items[i].name, items[i].remain);
     }
-    if (maxID == -1) {
-        printf("등록된 상품이 없습니다.\n");
-    }
-    else if (maxSales == 0) {
-        printf("판매된 상품이 없음\n");
-    }
-    else
-    {
-        printf("\n가장 많이 판매된 상품 : ID %d, 상품명:%s,  판매량 %d\n", maxID + 1, name[maxID], maxSales);
-        printf("가장 적게 판매된 상품 : ID %d, 상품명:%s, 판매량 %d\n", minID + 1, name[minID], minSales);
+
+    if (maxID == -1)
+        printf("등록된 상품 없음\n");
+    else {
+        printf("\n베스트셀러: ID %d %s (%d개)\n",
+            maxID + 1, items[maxID].name, maxSales);
+        printf("최소 판매: ID %d %s (%d개)\n",
+            minID + 1, items[minID].name, minSales);
     }
 }
 
-//저장
 void saveData() {
-    FILE* fp;
-    fp = fopen("shopping_data.txt", "w");
-    if (fp == NULL) {
-        printf("파일 저장 실패\n");
-        return;
-    }
-    for (int i = 0; i < PRODUCT; i++)
-    {
-        if (strlen(name[i]) == 0)
-            continue;
-        for (int j = 0; j < strlen(name[i]); j++) {
-            if (name[i][j] == ' ')
-                name[i][j] = '_';
-        }
-
-        fprintf(fp, "%d %s %d %d %d %d\n", ID[i], name[i], in[i], out[i], outall[i], productcost[i]);
-    }
-    fclose(fp);
-    printf("\n저장 완료\n");
-}
-
-//불러오기
-void loadData() {
-    FILE* fp;
-    fp = fopen("shopping_data.txt", "r");
-    if (fp == NULL) {
-        printf("파일 열기 실패\n");
+    FILE* fp = fopen("shopping_data.txt", "w");
+    if (!fp) {
+        printf("저장 실패\n");
         return;
     }
 
     for (int i = 0; i < PRODUCT; i++) {
-        if (fscanf(fp, "%d %s %d %d %d %d", &ID[i], name[i], &in[i], &out[i], &outall[i], &productcost[i]) != 6) {
-            break;
-        }
-        // 이름에서 '_'를 공백으로 바꾸기
-        for (int j = 0; j < strlen(name[i]); j++) {
-            if (name[i][j] == '_')
-                name[i][j] = ' ';
-        }
-    }
-    fclose(fp);
-    printf("\n불러오기 완료\n");
+        if (strlen(items[i].name) == 0) continue;
 
+        fprintf(fp, "%d %s %d %d %d %d\n",
+            items[i].ID, items[i].name,
+            items[i].in, items[i].out,
+            items[i].remain, items[i].cost);
+    }
+
+    fclose(fp);
+    printf("저장 완료\n");
+}
+
+void loadData() {
+    FILE* fp = fopen("shopping_data.txt", "r");
+    if (!fp) {
+        printf("불러오기 실패\n");
+        return;
+    }
+
+    for (int i = 0; i < PRODUCT; i++) {
+        if (fscanf(fp, "%d %s %d %d %d %d",
+            &items[i].ID, items[i].name,
+            &items[i].in, &items[i].out,
+            &items[i].remain, &items[i].cost) != 6) break;
+    }
+
+    fclose(fp);
+    printf("불러오기 완료\n");
 }
